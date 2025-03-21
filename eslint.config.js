@@ -15,18 +15,18 @@ const compat = new FlatCompat({baseDirectory: __dirname, recommendedConfig: plug
 export default [
   {
     languageOptions: {
-      globals: globals.node, // Глобальные переменные для Node.js
-      ecmaVersion: "latest", // Используем последнюю версию ECMAScript
-      sourceType: "module", // Указываем, что используем ES-модули
-      parser: babelParser, // Используем Babel для парсинга
+      globals: globals.node,
+      ecmaVersion: "latest",
+      sourceType: "module",
+      parser: babelParser,
       parserOptions: {
-        requireConfigFile: false, // Не используем отдельный конфиг Babel
+        requireConfigFile: false,
         babelOptions: {
-          presets: ["@babel/preset-env"], // Используем preset-env для поддержки современного JS
+          presets: ["@babel/preset-env"],
         },
       },
     },
   },
-  ...compat.extends("airbnb"), // Подключаем конфигурацию Airbnb
+  ...compat.extends("airbnb"),
 ];
 /* eslint-enable */
