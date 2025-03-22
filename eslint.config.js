@@ -1,4 +1,3 @@
-/* eslint-disable */
 import globals from "globals";
 
 import path from "path";
@@ -13,6 +12,9 @@ const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({baseDirectory: __dirname, recommendedConfig: pluginJs.configs.recommended});
 
 export default [
+  {
+    ignores: ["webpack-demo/dist/main.js", "eslint.config.js"],
+  },
   {
     languageOptions: {
       globals: globals.node,
@@ -29,4 +31,3 @@ export default [
   },
   ...compat.extends("airbnb"),
 ];
-/* eslint-enable */
