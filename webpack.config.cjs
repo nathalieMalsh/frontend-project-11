@@ -10,9 +10,14 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'My App',
+      title: 'RSS reader',
     }),
   ],
+  devServer: {
+    client: {
+      overlay: false,
+    },
+  },
   module: {
     rules: [
       {
