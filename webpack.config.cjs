@@ -14,6 +14,9 @@ module.exports = {
     }),
   ],
   devServer: {
+    static: path.resolve(__dirname, 'dist'),
+    port: 8080,
+    hot: true,
     client: {
       overlay: false,
     },
@@ -33,7 +36,7 @@ module.exports = {
       { test: /\.css$/, use: ['style-loader', 'css-loader', 'postcss-loader'] },
       {
         test: /\.scss$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
+        use: ['style-loader', 'css-loader', 'sass-loader', 'postcss-loader'],
       },
       {
         test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
@@ -43,10 +46,6 @@ module.exports = {
         test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
         use: 'file-loader',
       },
-      {
-        test: /\.(woff|woff2|eot|ttf|svg)$/,
-        type: 'asset/resource'
-      },
     ],
-  }
+  },
 };
