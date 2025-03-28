@@ -5,12 +5,14 @@ module.exports = {
   mode: process.env.NODE_ENV || 'development',
   entry: './src/index.js',
   output: {
-    filename: 'main.js',
+    filename: 'index.js',
     path: path.resolve(__dirname, 'dist'),
+    clean: true,
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'RSS reader',
+      template: path.resolve(__dirname, 'index.html'),
+      filename: 'index.html',
     }),
   ],
   devServer: {
