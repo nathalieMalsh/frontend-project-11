@@ -5,6 +5,8 @@
   "description": "[![Actions Status](https://github.com/nathalieMalsh/frontend-project-11/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/nathalieMalsh/frontend-project-11/actions)",
   "private": true,
   "scripts": {
+    "build": "webpack --mode production",
+    "serve": "webpack serve",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
