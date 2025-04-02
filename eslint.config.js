@@ -17,7 +17,10 @@ export default [
   },
   {
     languageOptions: {
-      globals: globals.node,
+      globals: {
+        ...globals.browser, // Добавляем browser globals (document, window и т.д.)
+        ...globals.node
+      },
       ecmaVersion: "latest",
       sourceType: "module",
       parser: babelParser,
@@ -30,4 +33,10 @@ export default [
     },
   },
   ...compat.extends("airbnb"),
+  {
+    rules: {
+      "import/extensions": ["error", "ignorePackages"],
+      "no-param-reassign": ["error", { "props": false }]
+    }
+  }
 ];
