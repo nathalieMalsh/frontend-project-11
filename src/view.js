@@ -1,4 +1,4 @@
-export default (state, elements) => {
+export default (state, elements, i18nextInstance) => {
   elements.input.value = state.inputValue;
 
   // Отрисовка ошибок
@@ -22,7 +22,7 @@ export default (state, elements) => {
       elements.input.value = '';
       elements.feedback.classList.remove('text-danger');
       elements.feedback.classList.add('text-success');
-      elements.feedback.textContent = 'RSS успешно загружен';
+      elements.feedback.textContent = i18nextInstance.t('status.success');
       break;
     default:
       break;

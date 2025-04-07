@@ -2,6 +2,8 @@ import './styles.scss';
 import 'bootstrap';
 import * as yup from 'yup';
 import onChange from 'on-change';
+import i18next from 'i18next';
+import resources from './ru.js';
 import render from './view.js';
 
 // Model (состояние)
@@ -18,45 +20,63 @@ const elements = {
   feedback: document.querySelector('.feedback'),
 };
 
-// Валидация
-const validateURL = (url) => {
-  const schema = yup.string()
-    .required()
-    .url('Ссылка должна быть валидным URL')
-    .test(
-      'is-unique',
-      'RSS уже существует',
-      (value) => !state.feeds.includes(value),
-    );
-
-  return schema.validate(url)
-    .then(() => null)
-    .catch((err) => err.message);
-};
-
-// View (представление)
-const watchedState = onChange(state, () => render(watchedState, elements));
-
-// Contoller (события)
-elements.form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const formData = new FormData(e.target);
-  const url = formData.get('url');
-  watchedState.inputValue = url;
-
-  validateURL(url)
-    .then((error) => {
-      if (error) {
-        watchedState.error = error;
-        watchedState.inputState = 'invalid';
-      } else {
-        watchedState.error = null;
-        watchedState.inputState = 'valid';
-        watchedState.feeds.push(url);
-      }
-    })
-    .catch(() => {
-      watchedState.error = 'Неизвестная ошибка';
-      watchedState.inputState = 'invalid';
-    });
+yup.setLocale({
+  string: {
+    required: () => ({ key: 'errors.empty' }),
+    url: () => ({ key: 'errors.url' }),
+  },
+  mixed: {
+    notOneOf: () => ({ key: 'errors.alreadyOnTheList' }),
+  },
 });
+
+// i18next
+const i18nextInstance = i18next.createInstance();
+i18nextInstance.init({
+  lng: 'ru',
+  debug: true,
+  resources,
+})
+  .then(() => {
+    // View (представление)
+    const watchedState = onChange(state, () => render(watchedState, elements, i18nextInstance));
+
+    // Валидация
+    const validateURL = (url) => {
+      const schema = yup.string()
+        .required()
+        .url()
+        .notOneOf(state.feeds);
+
+      return schema.validate(url)
+        .then(() => null)
+        .catch((err) => {
+          const translationKey = err.message.key || 'errors.unknown';
+          return i18nextInstance.t(translationKey);
+        });
+    };
+
+    // Contoller (события)
+    elements.form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const url = formData.get('url');
+      watchedState.inputValue = url;
+
+      validateURL(url)
+        .then((error) => {
+          if (error) {
+            watchedState.error = error;
+            watchedState.inputState = 'invalid';
+          } else {
+            watchedState.error = null;
+            watchedState.inputState = 'valid';
+            watchedState.feeds.push(url);
+          }
+        })
+        .catch(() => {
+          watchedState.error = i18nextInstance.t('errors.unknown');
+          watchedState.inputState = 'invalid';
+        });
+    });
+  });
