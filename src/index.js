@@ -3,7 +3,7 @@ import 'bootstrap';
 import * as yup from 'yup';
 import onChange from 'on-change';
 import i18next from 'i18next';
-import resources from './ru.js';
+import ru from './ru.js';
 import render from './view.js';
 
 // Model (состояние)
@@ -35,7 +35,9 @@ const i18nextInstance = i18next.createInstance();
 i18nextInstance.init({
   lng: 'ru',
   debug: true,
-  resources,
+  resources: {
+    ru,
+  }
 })
   .then(() => {
     // View (представление)
