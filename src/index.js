@@ -37,7 +37,7 @@ i18nextInstance.init({
   debug: true,
   resources: {
     ru,
-  }
+  },
 })
   .then(() => {
     // View (представление)
