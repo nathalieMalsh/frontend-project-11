@@ -5,12 +5,15 @@ import onChange from 'on-change';
 import i18next from 'i18next';
 import ru from './ru.js';
 import render from './view.js';
+import fetchRSS from './api.js';
+import parse from './parser.js';
 
 // Model (состояние)
 const state = {
   inputState: 'filling', // valid, invalid
   inputValue: '',
   feeds: [],
+  posts: [],
   error: null,
 };
 
@@ -48,12 +51,12 @@ i18nextInstance.init({
       const schema = yup.string()
         .required()
         .url()
-        .notOneOf(state.feeds);
+        .notOneOf(state.feeds.map((feed) => feed.link));
 
       return schema.validate(url)
         .then(() => null)
-        .catch((err) => {
-          const translationKey = err.message.key || 'errors.unknown';
+        .catch((error) => {
+          const translationKey = error.message.key || 'errors.unknown';
           return i18nextInstance.t(translationKey);
         });
     };
@@ -66,19 +69,31 @@ i18nextInstance.init({
       watchedState.inputValue = url;
 
       validateURL(url)
-        .then((error) => {
-          if (error) {
-            watchedState.error = error;
-            watchedState.inputState = 'invalid';
-          } else {
-            watchedState.error = null;
-            watchedState.inputState = 'valid';
-            watchedState.feeds.push(url);
-          }
-        })
-        .catch(() => {
-          watchedState.error = i18nextInstance.t('errors.unknown');
+      .then((error) => {
+        if (error) {
+          watchedState.error = error;
           watchedState.inputState = 'invalid';
+          throw new Error(error);
+        } else {
+          watchedState.error = null;
+          watchedState.inputState = 'valid';
+          return url;
+        }
+      })
+      .then((url) => {
+        fetchRSS(url, i18nextInstance)
+        .then((xml) => {
+          const { feed, posts } = parse(xml, url, i18nextInstance);
+          watchedState.feeds = [...watchedState.feeds, feed];
+          watchedState.posts = [...watchedState.posts, ...posts];
+          console.log(state);
+        })
+        .catch((error) => {
+          watchedState.error = error.message;
+          watchedState.inputState = 'invalid';
+          console.log(state);
+          throw new Error(watchedState.error);
         });
+      });
     });
   });
