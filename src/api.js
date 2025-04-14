@@ -14,7 +14,7 @@ const fetchRSS = (url, i18nextInstance) => {
     })
     .catch(() => {
       throw new Error(i18nextInstance.t('errors.network'));
-    })
+    });
 };
 
 export default fetchRSS;

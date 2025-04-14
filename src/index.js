@@ -21,6 +21,8 @@ const elements = {
   form: document.querySelector('form'),
   input: document.querySelector('#url-input'),
   feedback: document.querySelector('.feedback'),
+  feeds: document.querySelector('.feeds'),
+  posts: document.querySelector('.posts'),
 };
 
 yup.setLocale({
@@ -69,31 +71,31 @@ i18nextInstance.init({
       watchedState.inputValue = url;
 
       validateURL(url)
-      .then((error) => {
-        if (error) {
-          watchedState.error = error;
-          watchedState.inputState = 'invalid';
-          throw new Error(error);
-        } else {
-          watchedState.error = null;
-          watchedState.inputState = 'valid';
-          return url;
-        }
-      })
-      .then((url) => {
-        fetchRSS(url, i18nextInstance)
-        .then((xml) => {
-          const { feed, posts } = parse(xml, url, i18nextInstance);
-          watchedState.feeds = [...watchedState.feeds, feed];
-          watchedState.posts = [...watchedState.posts, ...posts];
-          console.log(state);
+        .then((error) => {
+          if (error) {
+            watchedState.error = error;
+            watchedState.inputState = 'invalid';
+            throw new Error(error);
+          } else {
+            watchedState.error = null;
+            watchedState.inputState = 'valid';
+            return url;
+          }
         })
-        .catch((error) => {
-          watchedState.error = error.message;
-          watchedState.inputState = 'invalid';
-          console.log(state);
-          throw new Error(watchedState.error);
+        .then((link) => {
+          fetchRSS(link, i18nextInstance)
+            .then((xml) => {
+              const { feed, posts } = parse(xml, url, i18nextInstance);
+              watchedState.feeds = [...watchedState.feeds, feed];
+              watchedState.posts = [...watchedState.posts, ...posts];
+              console.log(state);
+            })
+            .catch((error) => {
+              watchedState.error = error.message;
+              watchedState.inputState = 'invalid';
+              console.log(state);
+              throw new Error(watchedState.error);
+            });
         });
-      });
     });
   });
