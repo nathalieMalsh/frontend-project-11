@@ -10,19 +10,24 @@ import parse from './parser.js';
 
 // Model (состояние)
 const state = {
-  inputState: 'filling', // valid, invalid
+  inputState: 'filling', // valid, invalid, sending
   inputValue: '',
   feeds: [],
   posts: [],
   error: null,
+  activePostId: null,
 };
 
 const elements = {
   form: document.querySelector('form'),
   input: document.querySelector('#url-input'),
+  submit: document.querySelector('[type="submit"]'),
   feedback: document.querySelector('.feedback'),
   feeds: document.querySelector('.feeds'),
   posts: document.querySelector('.posts'),
+  modalHeader: document.querySelector('.modal-header'),
+  modalBody: document.querySelector('.modal-body'),
+  modalButtons: document.querySelectorAll('.btn-outline-primary'),
 };
 
 yup.setLocale({
@@ -46,7 +51,7 @@ i18nextInstance.init({
 })
   .then(() => {
     // View (представление)
-    const watchedState = onChange(state, () => render(watchedState, elements, i18nextInstance));
+    const watchedState = onChange(state, (path) => render(path, state, elements, i18nextInstance));
 
     // Валидация
     const validateURL = (url) => {
@@ -66,6 +71,7 @@ i18nextInstance.init({
     // Contoller (события)
     elements.form.addEventListener('submit', (e) => {
       e.preventDefault();
+      watchedState.inputState = 'filling';
       const formData = new FormData(e.target);
       const url = formData.get('url');
       watchedState.inputValue = url;
@@ -78,24 +84,30 @@ i18nextInstance.init({
             throw new Error(error);
           } else {
             watchedState.error = null;
-            watchedState.inputState = 'valid';
             return url;
           }
         })
         .then((link) => {
+          watchedState.inputState = 'sending';
           fetchRSS(link, i18nextInstance)
             .then((xml) => {
               const { feed, posts } = parse(xml, url, i18nextInstance);
               watchedState.feeds = [...watchedState.feeds, feed];
               watchedState.posts = [...watchedState.posts, ...posts];
-              console.log(state);
+              watchedState.inputState = 'valid';
             })
             .catch((error) => {
               watchedState.error = error.message;
               watchedState.inputState = 'invalid';
-              console.log(state);
               throw new Error(watchedState.error);
             });
         });
+    });
+
+    elements.posts.addEventListener('click', (e) => {
+      if (e.target.classList.contains('btn-outline-primary')) {
+        e.preventDefault();
+        watchedState.activePostId = e.target.dataset.id;
+      }
     });
   });

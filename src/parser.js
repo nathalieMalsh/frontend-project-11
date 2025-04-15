@@ -18,11 +18,12 @@ const parse = (xml, url, i18nextInstance) => {
     title: doc.querySelector('title').textContent,
     description: doc.querySelector('description').textContent,
   };
+
   doc.querySelectorAll('item').forEach((item) => {
     posts.push({
       feedId,
-      title: doc.querySelector('title').textContent,
-      description: doc.querySelector('description').textContent,
+      title: item.querySelector('title').textContent,
+      description: item.querySelector('description').textContent,
       link: item.querySelector('link').textContent,
       id: uniqueId(),
     });
