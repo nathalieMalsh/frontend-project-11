@@ -136,7 +136,7 @@ const renderModal = (state, elements) => {
   elements.modalHeader.append(closeButton);
 };
 
-export default (path, value, state, elements, i18nextInstance) => {
+export default (path, state, elements, i18nextInstance) => {
   switch (path) {
     case 'inputState':
       renderInput(state, elements, i18nextInstance);
