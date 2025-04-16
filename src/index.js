@@ -50,6 +50,23 @@ i18nextInstance.init({
   },
 })
   .then(() => {
+    // Обновление RSS потоков
+    const updateRSS = (watchedState) => {
+      watchedState.feeds.forEach((feed) => {
+        fetchRSS(feed.link, i18nextInstance)
+          .then((xml) => {
+            const addedPostLinks = watchedState.posts.map((post) => post.link);
+            const { posts } = parse(xml, feed.link, i18nextInstance, feed.id);
+            const newPosts = posts.filter((post) => !addedPostLinks.includes(post.link));
+            watchedState.posts = [...watchedState.posts, ...newPosts];
+          })
+          .catch((error) => {
+            console.error(`Ошибка при получении данных из ${feed.id}:`, error);
+          });
+      });
+      return setTimeout(updateRSS, 5000, watchedState);
+    };
+
     // View (представление)
     const watchedState = onChange(state, (path) => render(path, state, elements, i18nextInstance));
 
@@ -110,4 +127,6 @@ i18nextInstance.init({
         watchedState.activePostId = e.target.dataset.id;
       }
     });
+
+    updateRSS(watchedState);
   });

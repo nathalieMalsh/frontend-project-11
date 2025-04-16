@@ -1,8 +1,7 @@
 import uniqueId from 'lodash/uniqueId.js';
 
-const parse = (xml, url, i18nextInstance) => {
+const parse = (xml, url, i18nextInstance, feedId = uniqueId()) => {
   const posts = [];
-  const feedId = uniqueId();
 
   const domParser = new DOMParser();
   const doc = domParser.parseFromString(xml, 'text/xml');
