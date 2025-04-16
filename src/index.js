@@ -51,7 +51,7 @@ i18nextInstance.init({
 })
   .then(() => {
     // Обновление RSS потоков
-    const updateRSS = (watchedState) => {
+    const updatePosts = (watchedState) => {
       watchedState.feeds.forEach((feed) => {
         fetchRSS(feed.link, i18nextInstance)
           .then((xml) => {
@@ -64,7 +64,7 @@ i18nextInstance.init({
             console.error(`Ошибка при получении данных из ${feed.id}:`, error);
           });
       });
-      return setTimeout(updateRSS, 5000, watchedState);
+      return setTimeout(updatePosts, 5000, watchedState);
     };
 
     // View (представление)
@@ -128,5 +128,5 @@ i18nextInstance.init({
       }
     });
 
-    updateRSS(watchedState);
+    updatePosts(watchedState);
   });
