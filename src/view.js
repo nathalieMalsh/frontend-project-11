@@ -96,8 +96,13 @@ const renderPosts = (state, elements, i18nextInstance) => {
     a.setAttribute('data-id', id);
     a.setAttribute('target', '_blank');
     a.setAttribute('rel', 'noopener noreferrer');
-    a.classList.add('fw-bold');
     a.textContent = title;
+
+    if (state.uiState.viewedPostsId.includes(id)) {
+      a.classList.add('fw-nprmal');
+    } else {
+      a.classList.add('fw-bold');
+    }
 
     const button = document.createElement('button');
     button.setAttribute('type', 'button');
@@ -119,7 +124,7 @@ const renderModal = (state, elements) => {
   elements.modalHeader.innerHTML = '';
   elements.modalBody.innerHTML = '';
 
-  const activePost = state.posts.filter((post) => post.id === state.activePostId);
+  const activePost = state.posts.filter((post) => post.id === state.uiState.modalPostId);
   const [{ description, title }] = activePost;
 
   const h5 = document.createElement('h5');
@@ -147,8 +152,11 @@ export default (path, state, elements, i18nextInstance) => {
     case 'posts':
       renderPosts(state, elements, i18nextInstance);
       break;
-    case 'activePostId':
+    case 'uiState.modalPostId':
       renderModal(state, elements);
+      break;
+    case 'uiState.viewedPosts':
+      renderPosts(state, elements, i18nextInstance);
       break;
     default:
       break;

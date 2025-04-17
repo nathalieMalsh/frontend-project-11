@@ -15,7 +15,10 @@ const state = {
   feeds: [],
   posts: [],
   error: null,
-  activePostId: null,
+  uiState: {
+    modalPostId: null,
+    viewedPostsId: [],
+  },
 };
 
 const elements = {
@@ -124,7 +127,8 @@ i18nextInstance.init({
     elements.posts.addEventListener('click', (e) => {
       if (e.target.classList.contains('btn-outline-primary')) {
         e.preventDefault();
-        watchedState.activePostId = e.target.dataset.id;
+        watchedState.uiState.modalPostId = e.target.dataset.id;
+        watchedState.uiState.viewedPostsId.push(e.target.dataset.id);
       }
     });
 
