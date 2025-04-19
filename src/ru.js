@@ -4,8 +4,8 @@ export default {
       empty: 'Не должно быть пустым',
       url: 'Ссылка должна быть валидным URL',
       alreadyOnTheList: 'RSS уже существует',
-      network: 'Ошибка сети. Проверьте соединение',
-      parseError: 'Ошибка при разборе RSS',
+      network: 'Ошибка сети',
+      parseError: 'Ресурс не содержит валидный RSS',
       unknown: 'Неизвестная ошибка',
     },
     status: {

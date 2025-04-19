@@ -1,6 +1,6 @@
 import uniqueId from 'lodash/uniqueId.js';
 
-const parse = (xml, url, i18nextInstance, feedId = uniqueId()) => {
+const parse = (xml, url, i18n, feedId = uniqueId()) => {
   const posts = [];
 
   const domParser = new DOMParser();
@@ -8,7 +8,7 @@ const parse = (xml, url, i18nextInstance, feedId = uniqueId()) => {
 
   const parseError = doc.querySelector('parsererror');
   if (parseError) {
-    throw new Error(i18nextInstance.t('errors.parseError'));
+    throw new Error(i18n.t('errors.parseError'));
   }
 
   const feed = {

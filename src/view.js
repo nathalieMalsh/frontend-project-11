@@ -1,5 +1,5 @@
 // Отрисовка состояния поля ввода
-const renderInput = (state, elements, i18nextInstance) => {
+const renderInput = (state, elements, i18n) => {
   switch (state.inputState) {
     case 'filling':
       elements.submit.disabled = false;
@@ -14,7 +14,7 @@ const renderInput = (state, elements, i18nextInstance) => {
       elements.input.classList.remove('is-invalid');
       elements.feedback.classList.remove('text-danger');
       elements.feedback.classList.add('text-success');
-      elements.feedback.textContent = i18nextInstance.t('status.success');
+      elements.feedback.textContent = i18n.t('status.success');
       break;
     case 'invalid':
       elements.submit.disabled = false;
@@ -38,7 +38,7 @@ const renderInput = (state, elements, i18nextInstance) => {
 };
 
 // Отрисовка фидов
-const renderFeeds = (state, elements, i18nextInstance) => {
+const renderFeeds = (state, elements, i18n) => {
   elements.feeds.innerHTML = '';
   const card = document.createElement('div');
   card.classList.add('card', 'border-0');
@@ -46,7 +46,7 @@ const renderFeeds = (state, elements, i18nextInstance) => {
   cardBody.classList.add('card-body');
   const cardTitle = document.createElement('h2');
   cardTitle.classList.add('card-title', 'h4');
-  cardTitle.textContent = i18nextInstance.t('elements.feeds');
+  cardTitle.textContent = i18n.t('elements.feeds');
 
   elements.feeds.append(card);
   card.append(cardBody);
@@ -72,7 +72,7 @@ const renderFeeds = (state, elements, i18nextInstance) => {
 };
 
 // Отрисовка постов
-const renderPosts = (state, elements, i18nextInstance) => {
+const renderPosts = (state, elements, i18n) => {
   elements.posts.innerHTML = '';
   const card = document.createElement('div');
   card.classList.add('card', 'border-0');
@@ -80,7 +80,7 @@ const renderPosts = (state, elements, i18nextInstance) => {
   cardBody.classList.add('card-body');
   const cardTitle = document.createElement('h2');
   cardTitle.classList.add('card-title', 'h4');
-  cardTitle.textContent = i18nextInstance.t('elements.posts');
+  cardTitle.textContent = i18n.t('elements.posts');
 
   elements.posts.append(card);
   card.append(cardBody);
@@ -99,7 +99,7 @@ const renderPosts = (state, elements, i18nextInstance) => {
     a.textContent = title;
 
     if (state.uiState.viewedPostsId.includes(id)) {
-      a.classList.add('fw-nprmal');
+      a.classList.add('fw-normal');
     } else {
       a.classList.add('fw-bold');
     }
@@ -110,7 +110,7 @@ const renderPosts = (state, elements, i18nextInstance) => {
     button.setAttribute('data-bs-toggle', 'modal');
     button.setAttribute('data-bs-target', '#modal');
     button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-    button.textContent = i18nextInstance.t('elements.button');
+    button.textContent = i18n.t('elements.button');
 
     card.append(ul);
     ul.append(li);
@@ -141,22 +141,22 @@ const renderModal = (state, elements) => {
   elements.modalHeader.append(closeButton);
 };
 
-export default (path, state, elements, i18nextInstance) => {
+export default (path, state, elements, i18n) => {
   switch (path) {
     case 'inputState':
-      renderInput(state, elements, i18nextInstance);
+      renderInput(state, elements, i18n);
       break;
     case 'feeds':
-      renderFeeds(state, elements, i18nextInstance);
+      renderFeeds(state, elements, i18n);
       break;
     case 'posts':
-      renderPosts(state, elements, i18nextInstance);
+      renderPosts(state, elements, i18n);
       break;
     case 'uiState.modalPostId':
       renderModal(state, elements);
       break;
-    case 'uiState.viewedPosts':
-      renderPosts(state, elements, i18nextInstance);
+    case 'uiState.viewedPostsId':
+      renderPosts(state, elements, i18n);
       break;
     default:
       break;

@@ -6,8 +6,7 @@
   "private": true,
   "scripts": {
     "build": "webpack --mode production",
-    "serve": "webpack serve --open",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "webpack serve --open"
   },
   "repository": {
     "type": "git",
@@ -26,6 +25,8 @@
     "@eslint/create-config": "^1.0.0",
     "@eslint/eslintrc": "^3.3.0",
     "@eslint/js": "^9.22.0",
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^22.14.1",
     "autoprefixer": "^10.4.21",
     "css-loader": "^7.1.2",
     "eslint": "^8.57.1",
