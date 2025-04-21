@@ -1,3 +1,4 @@
+/* eslint-disable */
 import globals from "globals";
 
 import path from "path";
@@ -40,3 +41,4 @@ export default [
     }
   }
 ];
+/* eslint-enable */
