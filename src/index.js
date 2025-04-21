@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import './styles.scss';
 import 'bootstrap';
 import * as yup from 'yup';

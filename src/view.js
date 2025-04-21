@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 // Отрисовка состояния поля ввода
 const renderInput = (state, elements, i18n) => {
   switch (state.inputState) {
