@@ -4,6 +4,7 @@ import 'bootstrap';
 import * as yup from 'yup';
 import onChange from 'on-change';
 import i18next from 'i18next';
+import uniqueId from 'lodash/uniqueId.js';
 import ru from './ru.js';
 import render from './view.js';
 import fetchRSS from './api.js';
@@ -12,7 +13,7 @@ import parse from './parser.js';
 const app = () => {
   // Model (состояние)
   const state = {
-    inputState: 'filling', // valid, invalid, sending
+    formState: 'filling', // valid, invalid, sending
     inputValue: '',
     feeds: [],
     posts: [],
@@ -57,52 +58,59 @@ const app = () => {
     .then(() => {
       // Обновление постов
       const updatePosts = (watchedState) => {
-        watchedState.feeds.forEach((feed) => {
-          fetchRSS(feed.link, i18n)
-            .then((xml) => {
-              const addedPostLinks = watchedState.posts.map((post) => post.link);
-              const { posts } = parse(xml, feed.link, i18n, feed.id);
-              const newPosts = posts.filter((post) => !addedPostLinks.includes(post.link));
-              watchedState.posts = [...watchedState.posts, ...newPosts];
-            })
-            .catch((error) => {
-              console.error(`Ошибка при получении данных из ${feed.id}:`, error);
-            });
-        });
-        return setTimeout(updatePosts, 5000, watchedState);
+        const promises = watchedState.feeds.map((feed) => fetchRSS(feed.link)
+          .then((xml) => {
+            const addedPostLinks = watchedState.posts.map((post) => post.link);
+            const { posts } = parse(xml, feed.link);
+            const newPosts = posts.filter((post) => !addedPostLinks.includes(post.link));
+            const postsWithId = newPosts.map((post) => ({
+              ...post,
+              id: uniqueId(),
+              feedId: feed.id,
+            }));
+            watchedState.posts.unshift(...postsWithId);
+            return null;
+          })
+          .catch((error) => {
+            console.error(`Ошибка при получении данных из ${feed.id}:`, error);
+            return null;
+          }));
+        return Promise.all(promises)
+          .finally(() => setTimeout(updatePosts, 5000, watchedState));
       };
 
       // View (представление)
       const watchedState = onChange(state, (path) => render(path, state, elements, i18n));
 
       // Валидация
-      const validateURL = (url) => {
+      const validateURL = (url, existingLinks) => {
         const schema = yup.string()
           .required()
           .url()
-          .notOneOf(state.feeds.map((feed) => feed.link));
+          .notOneOf(existingLinks);
 
         return schema.validate(url)
           .then(() => null)
           .catch((error) => {
-            const translationKey = error.message.key || 'errors.unknown';
-            return i18n.t(translationKey);
+            const translationKey = error.message.key || 'unknown';
+            return translationKey;
           });
       };
 
       // Contoller (события)
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
-        watchedState.inputState = 'filling';
+        watchedState.formState = 'filling';
         const formData = new FormData(e.target);
         const url = formData.get('url');
         watchedState.inputValue = url;
 
-        validateURL(url)
+        const existingLinks = watchedState.feeds.map((feed) => feed.link);
+        validateURL(url, existingLinks)
           .then((error) => {
             if (error) {
               watchedState.error = error;
-              watchedState.inputState = 'invalid';
+              watchedState.formState = 'invalid';
               throw new Error(error);
             } else {
               watchedState.error = null;
@@ -110,17 +118,19 @@ const app = () => {
             }
           })
           .then((link) => {
-            watchedState.inputState = 'sending';
-            fetchRSS(link, i18n)
+            watchedState.formState = 'sending';
+            fetchRSS(link)
               .then((xml) => {
-                const { feed, posts } = parse(xml, url, i18n);
-                watchedState.feeds = [...watchedState.feeds, feed];
-                watchedState.posts = [...watchedState.posts, ...posts];
-                watchedState.inputState = 'valid';
+                const { feed, posts } = parse(xml);
+                const feedId = uniqueId();
+                watchedState.feeds.push({ ...feed, id: feedId, link: url });
+                const postsWithId = posts.map((post) => ({ ...post, id: uniqueId(), feedId }));
+                watchedState.posts.unshift(...postsWithId);
+                watchedState.formState = 'valid';
               })
               .catch((error) => {
                 watchedState.error = error.message;
-                watchedState.inputState = 'invalid';
+                watchedState.formState = 'invalid';
                 throw new Error(watchedState.error);
               });
           });

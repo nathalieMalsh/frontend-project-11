@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 // Отрисовка состояния поля ввода
 const renderInput = (state, elements, i18n) => {
-  switch (state.inputState) {
+  switch (state.formState) {
     case 'filling':
       elements.submit.disabled = false;
       elements.input.classList.remove('is-invalid');
@@ -21,7 +21,7 @@ const renderInput = (state, elements, i18n) => {
       elements.submit.disabled = false;
       elements.input.value = state.inputValue;
       elements.input.classList.add('is-invalid');
-      elements.feedback.textContent = state.error;
+      elements.feedback.textContent = i18n.t(state.error);
       elements.feedback.classList.remove('text-success');
       elements.feedback.classList.add('text-danger');
       break;
@@ -144,7 +144,7 @@ const renderModal = (state, elements) => {
 
 export default (path, state, elements, i18n) => {
   switch (path) {
-    case 'inputState':
+    case 'formState':
       renderInput(state, elements, i18n);
       break;
     case 'feeds':

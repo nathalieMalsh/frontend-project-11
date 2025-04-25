@@ -14,7 +14,7 @@ const compat = new FlatCompat({baseDirectory: __dirname, recommendedConfig: plug
 
 export default [
   {
-    ignores: ["dist/index.js", "eslint.config.js", "webpack.config.cjs", "tests-examples/demo-todo-app.spec.js", "playwright.config.js"],
+    ignores: ["dist/index.js", "eslint.config.js", "webpack.config.cjs"],
   },
   {
     languageOptions: {
