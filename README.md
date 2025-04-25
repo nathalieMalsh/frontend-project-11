@@ -3,14 +3,14 @@
 
 [![my-check](https://github.com/nathalieMalsh/frontend-project-11/actions/workflows/my-check.yml/badge.svg)](https://github.com/nathalieMalsh/frontend-project-11/actions/workflows/my-check.yml)
 
-### Ссылка на развернутый проект:
-https://frontend-project-11-two-mu.vercel.app/
-
 # RSS агрегатор / RSS Reader
 
 Это учебный проект от Хекслета, который представляет собой RSS агрегатор (RSS Reader). 
 
 Rss Reader — сервис для агрегации RSS-потоков, с помощью которых удобно читать разнообразные источники, например, блоги. Он позволяет добавлять неограниченное количество RSS-лент, сам их обновляет и добавляет новые записи в общий поток.
+
+### Ссылка на развернутый проект:
+https://frontend-project-11-two-mu.vercel.app/
 
 ## Запуск проекта локально
 
